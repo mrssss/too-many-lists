@@ -1,37 +1,37 @@
-# Learn Rust With Entirely Too Many Linked Lists
+# 通过实现链表学Rust
 
-> Got any issues or want to check out all the final code at once?
-> [Everything's on Github!][github]
+> 有问题或者想要一次性查看完整的代码？
+> [GitHub上应有尽有][github]
 
-> **NOTE**: The current edition of this book is written against Rust 2018,
-> which was first released with rustc 1.31 (Dec 8, 2018). If your rust toolchain
-> is new enough, the Cargo.toml file that `cargo new` creates should contain the
-> line `edition = "2018"` (or if you're reading this in the far future, perhaps
-> some even larger number!). Using an older toolchain is possible, but unlocks
-> a secret **hardmode**, where you get extra compiler errors that go completely
-> unmentioned in the text of this book. Wow, sounds like fun!
+> **注意**：本书的当前版本是基于Rust 2018的实现，
+> 这个版本在2018年的12月8日发布，如果你的rust工具链足够新的话，才执行`cargo new`创建
+> 项目之后，在Cargo.toml文件中会包含一行`edition = "2018"`（如果在很久之后阅读这本书，
+> 这个数字可能会更大）。使用老版本的工具链也是可以的，但是可能会在编译的时候遇到一些书中没
+> 有提到的编译器错误。这样听起来也挺有趣的！^_^
 
-I fairly frequently get asked how to implement a linked list in Rust. The
-answer honestly depends on what your requirements are, and it's obviously not
-super easy to answer the question on the spot. As such I've decided to write
-this book to comprehensively answer the question once and for all.
+我经常被问到怎么用Rust实现一个链表。这个答案取决于你的需求是什么，当场回答这个问题显然是很
+困难的一件事情。所以我决定写这本书来一次性的把这个问题讲清楚。
 
-In this series I will teach you basic and advanced Rust programming
-entirely by having you implement 6 linked lists. In doing so, you should
-learn:
+在这个系列的文章中，我会通过实现6种不同的链表来教会你Rust编程的一些基础和进阶的知识。在阅
+读后面的内容之前，你需要先知道：
 
-* The following pointer types: `&`, `&mut`, `Box`, `Rc`, `Arc`, `*const`, `*mut`
-* Ownership, borrowing, inherited mutability, interior mutability, Copy
-* All The Keywords: struct, enum, fn, pub, impl, use, ...
-* Pattern matching, generics, destructors
-* Testing
-* Basic Unsafe Rust
+* 下面几种指针类型：
+    * `&`
+    * `&mut`
+    * `Box`
+    * `Rc`
+    * `Arc`
+    * `*const`
+    * `*mut`
+* 所有权，借用，继承可变性，内部可变性，复制
+* 所有的关键字：struct, enum, fn, pub, impl, use, ...
+* 模式匹配，泛型，析构函数
+* 测试
+* Unsafe Rust基础
 
-Yes, linked lists are so truly awful that you deal with all of these concepts in
-making them real.
+是的，链表是个很糟糕的东西，如果想要在实际应用中使用到它，你必须处理好所有的这些概念。
 
-Everything's in the sidebar (may be collapsed on mobile), but for quick
-reference, here's what we're going to be making:
+虽然，在侧边栏有本书的目录（在手机上可能被折叠），但是为了方便快速索引，我们还是把目录放在下面：
 
 1. [A Bad Singly-Linked Stack](first.md)
 2. [An Ok Singly-Linked Stack](second.md)
@@ -41,42 +41,25 @@ reference, here's what we're going to be making:
 6. [TODO: An Ok Unsafe Doubly-Linked Deque](sixth.md)
 7. [Bonus: A Bunch of Silly Lists](infinity.md)
 
-Just so we're all the same page, I'll be writing out all the commands that I
-feed into my terminal. I'll also be using Rust's standard package manager, Cargo,
-to develop the project. Cargo isn't necessary to write a Rust program, but it's
-*so much* better than using rustc directly. If you just want to futz around you
-can also run some simple programs in the browser via [play.rust-lang.org][play].
+正如你所看到的那样，我会写出所有我在终端中执行的命令。我也会使用Rust标准的打包工具（Cargo）
+来开发这个项目。Cargo并不是写Rust程序必须的工具，但是用它比直接用rustc好多了。如果你只是想写几个
+简单的程序试试，你也可以直接在浏览器中使用官方提供的[play.rust-lang.org][play]。
 
-Let's get started and make our project:
+首先，我们需要创建出我们的项目：
 
 ```text
 > cargo new --lib lists
 > cd lists
 ```
 
-We'll put each list in a separate file so that we don't lose any of our work.
+我们会将每个链表的实现分别放在不同的文件中，这样我们就不用丢掉已经完成的工作。
 
-It should be noted that the *authentic* Rust learning experience involves
-writing code, having the compiler scream at you, and trying to figure out
-what the heck that means. I will be carefully ensuring that this occurs as
-frequently as possible. Learning to read and understand Rust's generally
-excellent compiler errors and documentation is *incredibly* important to
-being a productive Rust programmer.
+值得一提的是，Rust编程的*真实体验*包含了写代码，被编译器怼，和搞清楚编译器是什么意思。我们会
+保证这种体验会经常的发生。学会读懂Rust超级优秀的编译器给出的提示和文档对于一个Rust程序员来讲，
+也是很重要的一项生存技能。
 
-Although actually that's a lie. In writing this I encountered *way* more
-compiler errors than I show. In particular, in the later chapters I won't be
-showing a lot of the random "I typed (copy-pasted) bad" errors that you
-expect to encounter in every language. This is a *guided tour* of having the
-compiler scream at us.
-
-We're going to be going pretty slow, and I'm honestly not going to be very
-serious pretty much the entire time. I think programming should be fun, dang it!
-If you're the type of person who wants maximally information-dense, serious, and
-formal content, this book is not for you. Nothing I will ever make is for you.
-You are wrong.
-
-
-
+我们不会进展的特别快，我也不想特别严肃。我认为编程应该是一件有意思的事情。如果你想要看到一些特别
+严肃，正式的内容，这本书不适合你。
 
 # An Obligatory Public Service Announcement
 

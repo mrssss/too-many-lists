@@ -1,25 +1,28 @@
-# Learn Rust by writing Entirely Too Many Linked Lists
-[![Build Status](https://travis-ci.org/rust-unofficial/too-many-lists.svg?branch=master)](https://travis-ci.org/rust-unofficial/too-many-lists)
+# 通过实现链表学Rust
 
-Read the pretty version at https://rust-unofficial.github.io/too-many-lists/.
+[英文版](https://rust-unofficial.github.io/too-many-lists/).
 
-# Building
+# 编译
 
-Building requires mdbook, which can be installed from crates.io:
+编译本书需要用到mdbook，可以从crates.io来安装mdbook
 
 ```sh
 cargo install mdbook
 ```
 
-Assuming you've placed the install directory `~/.cargo/bin` into your system PATH, then run from the root of your local copy:
+假设你已经将cargo的安装目录`~/.cargo/bin`配置到环境变量中了，要编译本书可以直接用下面的命令：
 
 ```sh
 mdbook build
 ```
 
+如果需要在直接在本机上查看离线文档，可以运行：
+
+```sh
+mdbook serve
+```
+
 ---
 
-If you'd prefer, this project can also be built with
-[GitBook](https://github.com/GitbookIO/gitbook), although GitBook
-is not officially supported and compatibility is therefore
-uncertain and incidental.
+本书也可以使用[gitbook](https://github.com/GitbookIO/gitbook)来编译，
+但是gitbook的方式不是官方支持的，所以可能会存在一些不确定的问题
